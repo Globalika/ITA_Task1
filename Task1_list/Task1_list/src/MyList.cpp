@@ -3,99 +3,91 @@
 
 void StringListInit(char*** list)
 {
-	if (*list == NULL) {
+	if (*list != NULL) {
 		return;
 	}
 	else {
-		*list = NULL;
-		return;
+		*list = (char**)calloc(sizeof(char**), 2);
+		if(NULL == *list) {
+			return;
+		}
 	}
 }
 void StringListDestroy(char*** list)
 {
-	if (*list == NULL) {
+	if (NULL == (*list)) {
 		return;
 	}
 	else {
-		while (*list != NULL)
+		while ((*list)[1] != NULL)
 		{
 			StringListPopFront(list);
 		}
-		return;
+		free(*list);
+		*list = NULL;
 	}
 }
-void StringListPrint(char*** list)
+void StringListPrint(char** list)
 {
-	if (*list == NULL) {
+	if (NULL == list || NULL == list[1]) {
 		return;
 	}
 	else {
-		char** curr = *list, ** prev;
+		char** curr = list;
+		char** prev = NULL;
 		while (curr[0] != NULL)
 		{
-			printf(curr[1]); printf(",");
+			printf("%s",curr[1]);
+			printf(",");
 			prev = curr;
 			curr = (char**)curr[0];
 		}
-		printf(curr[1]);
-		return;
+		printf("%s", curr[1]);
 	}
 }
-void StringListPushBack(char*** list, const char* str)
+void StringListPushBack(char** list, const char* str)
 {
-	if (str == NULL) {
+	if (NULL == str || NULL == list) {
 		return;
-	}
-	else if (*list == NULL) {
-		char** head = (char**)malloc(2 * sizeof(char**));
-		if (head != NULL) {
-			head[0] = NULL;
-			head[1] = (char*)malloc((strlen(str) + 1) * sizeof(char));
-		}
-		else { return; }
-
-		if (head[1] != NULL) {
-			strcpy_s(head[1], strlen(str) + 1, str);
-			*list = head;
-			return;
-		}
-		else { return; }
 	}
 	else {
-		char** curr = *list;
-		while (curr[0] != NULL)	{
-			curr = (char**)curr[0];
+		if (NULL == list[1]) {
+			list[1] = (char*)calloc((strlen(str) + 1) * sizeof(char), 1);
+			if (list[1] != NULL) {
+				strcpy_s(list[1], strlen(str) + 1, str);
+			}
 		}
-		char** node = (char**)malloc(2 * sizeof(char*));
-		if (node != NULL)
-		{
-			node[0] = NULL;
-			node[1] = (char*)malloc((strlen(str) + 1) * sizeof(char));
+		else {
+			char** curr = list;
+			while (curr[0] != NULL) {
+				curr = (char**)curr[0];
+			}
+			char** node = (char**)calloc(sizeof(char*), 2);
+			if (node != NULL) {
+				node[1] = (char*)calloc((strlen(str) + 1) * sizeof(char), 1);
+			}
+			else { return; }
+			if (node[1] != NULL) {
+				strcpy_s(node[1], strlen(str) + 1, str);
+				curr[0] = (char*)node;
+			}
 		}
-		else { return; }
-
-		if (node[1] != NULL) {
-			strcpy_s(node[1], strlen(str) + 1, str);
-			curr[0] = (char*)node;
-			return;
-		}
-		else { return; }
 	}
 }	
-void StringListPopBack(char*** list)
+void StringListPopBack(char** list)
 {
-	if (*list == NULL) {
+	if (NULL == list || NULL == list[1]) {
 		return;
 	}
-	else if ((*list)[0] == NULL) {
-		free((*list)[1]);
-		free(*list);
-		*list = NULL;
+	else if (list[0] == NULL) {
+		free(list[1]);
+		list[1] = NULL;
 		return;
 	}
 	else
 	{
-		char** curr = *list, ** prev = curr;
+		char** curr = list;
+		char** prev = NULL;
 		while (curr[0] != NULL)
 		{
 			prev = curr;
@@ -104,20 +96,27 @@ void StringListPopBack(char*** list)
 		free(curr[1]);
 		free(curr);
 		prev[0] = NULL;
-		return;
 	}
 }
 void StringListPushFront(char*** list, const char* str)
 {
-	if (str == NULL) {
+	if (NULL == str || NULL == (*list)) {
 		return;
 	}
+	else if (NULL == (*list)[1]) {
+		(*list)[1] = (char*)calloc((strlen(str) + 1) * sizeof(char), 1);
+		if ((*list)[1] != NULL) {
+			strcpy_s((*list)[1], strlen(str) + 1, str);
+		}
+		else { return; }
+	}
 	else {
-		char** oldHead = *list, ** newHead;
-		newHead = (char**)malloc(2 * sizeof(char*));
+		char** oldHead = *list;
+		char** newHead = NULL;
+		newHead = (char**)calloc(sizeof(char**), 2);
 		if (newHead != NULL)	{
 			newHead[0] = (char*)oldHead;
-			newHead[1] = (char*)malloc((strlen(str) + 1) * sizeof(char));
+			newHead[1] = (char*)calloc((strlen(str) + 1) * sizeof(char), 1);
 		}
 		else { return; }
 		if (newHead[1] != NULL) {
@@ -125,38 +124,36 @@ void StringListPushFront(char*** list, const char* str)
 			*list = newHead;
 			return;
 		}
-		else { return; }
 	}
 }
-void StringListPopFront(char*** list)//
+void StringListPopFront(char*** list)
 {
-	if (*list == NULL) {
+	if (NULL == (*list) || NULL == ((*list)[1])) {
 		return;
 	}
-	else if ((*list)[0] == NULL) {
+	else if (NULL == ((*list)[0])) {
 		free((*list)[1]);
-		free(*list);
-		*list = NULL;
+		(*list)[1] = NULL;
 		return;
 	}
 	else {
-		char** newHead = *list, ** oldHead;
-		oldHead = newHead;
+		char** newHead = *list;
+		char** oldHead = newHead;
 		newHead = (char**)newHead[0];
 		free(oldHead[1]);
 		free(oldHead);
 		*list = newHead;
-		return;
 	}
 }
-int StringListSize(char*** list)
+int StringListSize(char** list)
 {
-	if (*list == NULL) {
+	if (NULL == list || NULL == list[1]) {
 		return 0;
 	}
 	else {
 		int count = 1;
-		char** curr = *list, ** prev;
+		char** curr = list;
+		char** prev = NULL;
 		while (curr[0] != nullptr) {
 			prev = curr;
 			curr = (char**)curr[0];
@@ -165,13 +162,14 @@ int StringListSize(char*** list)
 		return count;
 	}
 }
-int StringListIndexOf(char*** list, const char* str)
+int StringListIndexOf(char** list, const char* str)
 {
-	if (*list == NULL) {
+	if (NULL == list || NULL == list[1]){
 		return -1;
 	}
 	else {
-		char** next = *list, ** curr;
+		char** next = list;
+		char** curr = NULL;
 		int pos = 0;
 		do {
 			curr = next;
@@ -186,17 +184,18 @@ int StringListIndexOf(char*** list, const char* str)
 }
 void StringListRemove(char*** list, const char* str)
 {
-	if (*list == NULL || str == NULL) {
+	if (NULL == str || NULL == (*list) || NULL == ((*list)[1])) {
 		return;
 	}
 	else {
-		char** curr = *list, ** prev = NULL;
+		char** curr = *list;
+		char** prev = NULL;
 		while (0 == strcmp(curr[1], str)) {
 			*list = (char**)curr[0];
 			free(curr[1]);
 			free(curr);
 			curr = *list;
-			if (curr == NULL) {
+			if (NULL == curr) {
 				return;
 			}
 		}
@@ -215,21 +214,21 @@ void StringListRemove(char*** list, const char* str)
 				curr = (char**)curr[0];
 			}
 		}
-		
 	}
 }
-void StringListRemoveDuplicates(char*** list)
+void StringListRemoveDuplicates(char** list)
 {
-	if (*list == NULL) {
+	if (NULL == list || NULL == list[1] || NULL == list[0]) {
 		return;
 	}
 	else {
-		char** current = NULL, ** previous = NULL, ** compared = *list;
+		char** compared = list;
+		char** previous = NULL;
+		char** current = NULL;
 		while (compared[0] != NULL)
 		{
-			compared = (char**)compared[0];
 			previous = compared;
-			current = (char**)previous[0];
+			current = (char**)compared[0];
 			while (current != NULL)
 			{
 				if (0 == strcmp(current[1], compared[1])) {
@@ -242,37 +241,43 @@ void StringListRemoveDuplicates(char*** list)
 				previous = current;
 				current = (char**)current[0];
 			}
+			if (NULL == compared[0]) {
+				return;
+			}
+			compared = (char**)compared[0];
 		}
-		return;
 	}
 }
-void StringListReplaceInStrings(char*** list, const char* before, const char* after)
+void StringListReplaceInStrings(char** list, const char* before, const char* after)
 {
-	if (*list == NULL || before == NULL || after == NULL) {
+	if (NULL == list || NULL == list[1] || NULL == before || NULL == after) {
 		return;
 	}
-	char** curr = *list, ** prev = curr;
-	while (prev[0] != NULL)
+	char** curr = NULL;
+	char** next = list;
+	do
 	{
-		prev = curr;
-		curr = (char**)curr[0];
-		if (0 == strcmp(before, prev[1])) {
-			free(prev[1]);
-			prev[1] = (char*)malloc((strlen(after) + 1) * sizeof(char));
-			if (prev[1] != NULL) {
-				strcpy_s(prev[1], strlen(after) + 1, after);
+		curr = next;
+		next = (char**)next[0];
+		if (0 == strcmp(before, curr[1])) {
+			free(curr[1]);
+			int stringLength = strlen(after) + 1;
+			curr[1] = (char*)calloc(stringLength * sizeof(char),1);
+			if (curr[1] != NULL) {
+				strcpy_s(curr[1], stringLength, after);
 			}
 		}
-	}
+	} while (next != NULL);
 }
-void StringListSort(char*** list)
+void StringListSort(char** list)
 {
-	if (*list == NULL) {
+	if (NULL == list || NULL == list[1] || NULL == list[0]) {
 		return;
 	}
 	else
 	{
-		char** iterable = *list, ** target;
+		char** iterable = list;
+		char** target = NULL;
 		target = iterable;
 		while (target[0] != NULL)
 		{
@@ -289,6 +294,5 @@ void StringListSort(char*** list)
 			}
 			iterable = (char**)target[0];
 		}
-		return;
 	}
 }

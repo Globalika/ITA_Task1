@@ -5,11 +5,11 @@ using namespace std;
 int main()
 {
 	
-	char** myList;
+	char** myList = NULL;
 	StringListInit(&myList);
 	StringListPushFront(&myList, "22");
-	StringListPushFront(&myList, "22");
-	StringListPushFront(&myList, "22");
+	StringListPushFront(&myList, "11");
+	StringListPushFront(&myList, "11");
 	StringListPushFront(&myList, "22");
 	StringListPushFront(&myList, "66");
 	StringListPushFront(&myList, "22");
@@ -27,9 +27,11 @@ int main()
 	StringListPushFront(&myList, "22");
 	StringListPushFront(&myList, "22");
 	StringListPushFront(&myList, "22");
-	StringListPrint(&myList); cout << endl;
-	StringListReplaceInStrings(&myList, "22", "00");
-	StringListPrint(&myList); cout << endl;
+	StringListPrint(myList); cout << endl; 
+	//StringListRemoveDuplicates(myList);
+	StringListSort(myList);
+	//StringListReplaceInStrings(myList, "22", "00");
+	StringListPrint(myList); cout << endl;
 	StringListDestroy(&myList);
 	return 0;
 }
