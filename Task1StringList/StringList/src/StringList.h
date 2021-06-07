@@ -34,4 +34,4 @@ void StringListBubbleSort(char** list);
 /* Sorts the list of strings in ascending order with quick sort algoritm. */
 void StringListQuickSort(char*** list, const char* end = NULL);
 
-#endif STRING_LIST
+#endif // STRING_LIST

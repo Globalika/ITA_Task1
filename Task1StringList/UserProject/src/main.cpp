@@ -1,6 +1,7 @@
 #include "..\..\StringList\src\StringList.h"
 
 #include "stdio.h"
+#include "string.h"
 
 void ListPushElements(char*** myList)
 {
@@ -35,7 +36,6 @@ void ListPopElements(char*** myList)
 	StringListPopBack(*myList);
 	StringListPrint(*myList); printf("\n");
 }
-
 int main()
 {
 	char** myList = NULL;
