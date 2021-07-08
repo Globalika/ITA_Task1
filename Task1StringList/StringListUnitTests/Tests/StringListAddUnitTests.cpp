@@ -46,14 +46,6 @@ namespace StringListUnitTests
 			StringListPushFront(&list, "111");
 			int actualIndex = StringListIndexOf(list, "111");
 			Assert::AreEqual(expectedIndex, actualIndex);
-			Assert::AreEqual(1, 1);
-			Assert::AreNotEqual(1, 2);
-			int a = 0, b = 0;
-			int* p = NULL;
-			Assert::AreSame(a, a);
-			Assert::AreNotSame(a, b);
-			Assert::IsNull(p);
-			Assert::IsTrue(true);
 		}
 	private:
 		char** list = NULL;

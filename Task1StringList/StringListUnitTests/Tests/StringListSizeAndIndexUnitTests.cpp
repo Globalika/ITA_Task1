@@ -18,13 +18,10 @@ namespace StringListUnitTests
 		}
 		TEST_METHOD(String_List_Get_Size)
 		{
-			int expectedSize1 = 1, expectedSize2 = 3;
-			StringListPushBack(list, "1");
-			int actualSize1 = StringListSize(list);
+			int expectedSize2 = 2;
 			StringListPushBack(list, "2");
 			StringListPushBack(list, "3");
 			int actualSize2 = StringListSize(list);
-			Assert::AreEqual(expectedSize1, actualSize1);
 			Assert::AreEqual(expectedSize2, actualSize2);
 		}
 		TEST_METHOD(String_List_Get_Size_When_No_Elements)

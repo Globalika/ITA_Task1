@@ -3,6 +3,7 @@
 #include "stdio.h"
 #include "string.h"
 
+
 void ListPushElements(char*** myList)
 {
 	printf("Push front seven elements :\n");
@@ -38,6 +39,7 @@ void ListPopElements(char*** myList)
 }
 int main()
 {
+
 	char** myList = NULL;
 	StringListInit(&myList);
 	ListPushElements(&myList);

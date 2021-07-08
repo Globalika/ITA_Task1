@@ -3,122 +3,161 @@
 #include "string.h"
 #include "stdio.h"
 
-void StringListInit(char*** list)
+#define NODE_SIZE 2
+#define ALLOCATE_ONE_OF_A_KIND 1
+
+int StringListInit(char*** list)
 {
-	if (*list != NULL) {
-		return;
+	if (NULL == list || *list != NULL) {
+		return -1;
 	}
-	else {
-		*list = (char**)calloc(sizeof(char**), 2);
+	else 
+	{
+		*list = (char**)calloc(sizeof(char**), NODE_SIZE);
 		if (NULL == *list) {
-			return;
+			return -1;
 		}
+		return 0;
 	}
 }
 
-void StringListDestroy(char*** list)
+int StringListDestroy(char*** list)
 {
-	if (NULL == (*list)) {
-		return;
+	if (NULL == list || NULL == (*list)) {
+		return -1;
 	}
-	else {
+	else 
+	{
 		while ((*list)[1] != NULL)
 		{
 			StringListPopFront(list);
 		}
 		free(*list);
 		*list = NULL;
+		return 0;
 	}
 }
 
-void StringListPushFront(char*** list, const char* str)
+int StringListPushFront(char*** list, const char* str)
 {
-	if (NULL == str || NULL == (*list)) {
-		return;
+	if (NULL == str || NULL == list || NULL == (*list)) {
+		return -1;
 	}
-	else if (NULL == (*list)[1]) {
-		(*list)[1] = (char*)calloc((strlen(str) + 1) * sizeof(char), 1);
-		if ((*list)[1] != NULL) {
-			strcpy_s((*list)[1], strlen(str) + 1, str);
+	else if (NULL == (*list)[1])
+	{
+		(*list)[1] = (char*)calloc((strlen(str) + 1) * sizeof(char), ALLOCATE_ONE_OF_A_KIND);
+		if (NULL == (*list)[1]) {
+			return -1;
 		}
-		else { return; }
+		else 
+		{
+			strcpy_s((*list)[1], strlen(str) + 1, str);
+			return 0;
+		}
 	}
-	else {
+	else 
+	{
 		char** oldHead = *list;
 		char** newHead = NULL;
-		newHead = (char**)calloc(sizeof(char**), 2);
-		if (newHead != NULL) {
-			newHead[0] = (char*)oldHead;
-			newHead[1] = (char*)calloc((strlen(str) + 1) * sizeof(char), 1);
+		newHead = (char**)calloc(sizeof(char**), NODE_SIZE);
+		if (NULL == newHead) {
+			return -1;
 		}
-		else { return; }
-		if (newHead[1] != NULL) {
+		else 
+		{
+			newHead[0] = (char*)oldHead;
+			newHead[1] = (char*)calloc((strlen(str) + 1) * sizeof(char), ALLOCATE_ONE_OF_A_KIND);
+		}
+		if (NULL == newHead[1]) {
+			return -1;
+		}
+		else 
+		{
 			strcpy_s(newHead[1], strlen(str) + 1, str);
 			*list = newHead;
-			return;
+			return 0;
 		}
 	}
 }
 
-void StringListPopFront(char*** list)
+int StringListPopFront(char*** list)
 {
-	if (NULL == (*list) || NULL == ((*list)[1])) {
-		return;
+	if (NULL == list || NULL == (*list) || NULL == ((*list)[1])) {
+		return -1;
 	}
-	else if (NULL == ((*list)[0])) {
+	else if (NULL == ((*list)[0])) 
+	{
 		free((*list)[1]);
 		(*list)[1] = NULL;
-		return;
+		return 0;
 	}
-	else {
+	else
+	{
 		char** newHead = *list;
 		char** oldHead = newHead;
 		newHead = (char**)newHead[0];
 		free(oldHead[1]);
 		free(oldHead);
 		*list = newHead;
+		return 0;
 	}
 }
 
-void StringListPushBack(char** list, const char* str)
+int StringListPushBack(char** list, const char* str)
 {
 	if (NULL == str || NULL == list) {
-		return;
+		return -1;
 	}
-	else {
-		if (NULL == list[1]) {
-			list[1] = (char*)calloc((strlen(str) + 1) * sizeof(char), 1);
-			if (list[1] != NULL) {
+	else 
+	{
+		if (NULL == list[1])
+		{
+			list[1] = (char*)calloc((strlen(str) + 1) * sizeof(char), ALLOCATE_ONE_OF_A_KIND);
+			if (NULL == list[1]) {
+				return -1;
+			}
+			else 
+			{
 				strcpy_s(list[1], strlen(str) + 1, str);
+				return 0;
 			}
 		}
-		else {
+		else 
+		{
 			char** curr = list;
 			while (curr[0] != NULL) {
 				curr = (char**)curr[0];
 			}
-			char** node = (char**)calloc(sizeof(char*), 2);
-			if (node != NULL) {
-				node[1] = (char*)calloc((strlen(str) + 1) * sizeof(char), 1);
+			char** node = (char**)calloc(sizeof(char*), NODE_SIZE);
+			if (NULL == node) {
+				return -1;
 			}
-			else { return; }
-			if (node[1] != NULL) {
+			else { 
+				node[1] = (char*)calloc((strlen(str) + 1) * sizeof(char), ALLOCATE_ONE_OF_A_KIND);
+			}
+			if (NULL == node[1]) {
+				return -1;
+			}
+			else 
+			{
 				strcpy_s(node[1], strlen(str) + 1, str);
 				curr[0] = (char*)node;
+				return 0;
 			}
 		}
 	}
 }
 
-void StringListPopBack(char** list)
+int StringListPopBack(char** list)
 {
 	if (NULL == list || NULL == list[1]) {
-		return;
+		return -1;
 	}
-	else if (list[0] == NULL) {
+	else if (list[0] == NULL)
+	{
 		free(list[1]);
 		list[1] = NULL;
-		return;
+		return 0;
 	}
 	else
 	{
@@ -132,15 +171,17 @@ void StringListPopBack(char** list)
 		free(curr[1]);
 		free(curr);
 		prev[0] = NULL;
+		return 0;
 	}
 }
 
-void StringListPrint(char** list)
+int StringListPrint(char** list)
 {
 	if (NULL == list || NULL == list[1]) {
-		return;
+		return -1;
 	}
-	else {
+	else 
+	{
 		char** curr = list;
 		char** prev = NULL;
 		while (curr[0] != NULL)
@@ -151,6 +192,7 @@ void StringListPrint(char** list)
 			curr = (char**)curr[0];
 		}
 		printf("%s", curr[1]);
+		return 0;
 	}
 }
 
@@ -159,11 +201,13 @@ int StringListSize(char** list)
 	if (NULL == list || NULL == list[1]) {
 		return 0;
 	}
-	else {
+	else 
+	{
 		int count = 1;
 		char** curr = list;
 		char** prev = NULL;
-		while (curr[0] != nullptr) {
+		while (curr[0] != nullptr)
+		{
 			prev = curr;
 			curr = (char**)curr[0];
 			count++;
@@ -177,7 +221,8 @@ int StringListIndexOf(char** list, const char* str)
 	if (NULL == list || NULL == list[1]) {
 		return -1;
 	}
-	else {
+	else 
+	{
 		char** next = list;
 		char** curr = NULL;
 		int pos = 0;
@@ -193,49 +238,56 @@ int StringListIndexOf(char** list, const char* str)
 	}
 }
 
-void StringListRemove(char*** list, const char* str)
+int StringListRemove(char*** list, const char* str)
 {
-	if (NULL == str || NULL == (*list) || NULL == ((*list)[1])) {
-		return;
+	if (NULL == str || NULL == list || NULL == (*list) || NULL == ((*list)[1])) {
+		return -1;
 	}
-	else {
+	else 
+	{
 		char** curr = *list;
 		char** prev = NULL;
-		while (0 == strcmp(curr[1], str)) {
+		while (0 == strcmp(curr[1], str)) 
+		{
 			*list = (char**)curr[0];
 			free(curr[1]);
 			free(curr);
 			curr = *list;
 			if (NULL == curr) {
-				return;
+				return 0;
 			}
 		}
 		prev = curr;
 		curr = (char**)curr[0];
 		while (curr != NULL)
 		{
-			if (0 == strcmp(curr[1], str)) {
+			if (0 == strcmp(curr[1], str)) 
+			{
 				prev[0] = curr[0];
 				free(curr[1]);
 				free(curr);
 				curr = (char**)prev[0];
 			}
-			else {
+			else
+			{
 				prev = curr;
 				curr = (char**)curr[0];
 			}
 		}
+		return 0;
 	}
 }
 
-void StringListRemoveDuplicates(char*** list)
+int StringListRemoveDuplicates(char*** list)
 {
-	if (NULL == *list || NULL == (*list)[1] || NULL == (*list)[0]) {
-		return;
+	if (NULL == list || NULL == *list || NULL == (*list)[1] || NULL == (*list)[0]) {
+		return -1;
 	}
 	else
 	{
-		StringListQuickSort(list);
+		if (StringListQuickSort(list) == -1) {
+			return -1;
+		}
 		char** current = *list;
 		char** next = (char**)current[0];
 		while (current[0] != NULL)
@@ -253,13 +305,14 @@ void StringListRemoveDuplicates(char*** list)
 				next = (char**)next[0];
 			}
 		}
+		return 0;
 	}
 }
 
-void StringListReplaceInStrings(char** list, const char* before, const char* after)
+int StringListReplaceInStrings(char** list, const char* before, const char* after)
 {
 	if (NULL == list || NULL == list[1] || NULL == before || NULL == after) {
-		return;
+		return -1;
 	}
 	char** curr = NULL;
 	char** next = list;
@@ -269,19 +322,23 @@ void StringListReplaceInStrings(char** list, const char* before, const char* aft
 		curr = next;
 		next = (char**)next[0];
 		if (0 == strcmp(before, curr[1])) {
-				free(curr[1]);
-				curr[1] = (char*)calloc(stringAfterLength * sizeof(char), 1);
-			if (curr[1] != NULL) {
+			free(curr[1]);
+			curr[1] = (char*)calloc(stringAfterLength * sizeof(char), ALLOCATE_ONE_OF_A_KIND);
+			if (NULL == curr[1]) {
+				return -1;
+			}
+			else {
 				strcpy_s(curr[1], stringAfterLength, after);
 			}
 		}
 	} while (next != NULL);
+	return 0;
 }
 
-void StringListBubbleSort(char** list)
+int StringListBubbleSort(char** list)
 {
 	if (NULL == list || NULL == list[1] || NULL == list[0]) {
-		return;
+		return -1;
 	}
 	else
 	{
@@ -306,10 +363,10 @@ void StringListBubbleSort(char** list)
 	}
 }
 
-void StringListQuickSort(char*** list, const char* end)
+int StringListQuickSort(char*** list, const char* end)
 {
 	if (NULL == *list || NULL == (*list)[1] || NULL == (*list)[0]) {
-		return;
+		return -1;
 	}
 	else
 	{
@@ -376,5 +433,6 @@ void StringListQuickSort(char*** list, const char* end)
 		if (right != NULL) {
 			StringListQuickSort(&right, end);
 		}
+		return 0;
 	}
 }

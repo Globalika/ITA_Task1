@@ -20,46 +20,32 @@ namespace StringListUnitTests
 			StringListPopBack(list);
 			int size = StringListSize(list);
 			Assert::AreEqual(size, 0);
-			Assert::IsNotNull(list);
 		}
 		TEST_METHOD(String_List_Pop_Front_When_No_Elements)
 		{
 			StringListPopFront(&list);
 			int size = StringListSize(list);
 			Assert::AreEqual(size, 0);
-			Assert::IsNotNull(list);
 		}
 		TEST_METHOD(String_List_Pop_Back_One_Element)
 		{
-			int expectedSize1 = 3, expectedSize2 = 2, expectedSize3 = 0;
+			int expectedSize2 = 2;
 			StringListPushBack(list, "11");
 			StringListPushBack(list, "33");
 			StringListPushBack(list, "22");
-			int actualSize1 = StringListSize(list);
 			StringListPopBack(list);
 			int actualSize2 = StringListSize(list);
-			StringListPopBack(list);
-			StringListPopBack(list);
-			int actualSize3 = StringListSize(list);
-			Assert::AreEqual(expectedSize1, actualSize1);
 			Assert::AreEqual(expectedSize2, actualSize2);
-			Assert::AreEqual(expectedSize3, actualSize3);
 		}
 		TEST_METHOD(String_List_Pop_Front_One_Element)
 		{
-			int expectedSize1 = 3, expectedSize2 = 2, expectedSize3 = 0;
+			int  expectedSize2 = 2;
 			StringListPushFront(&list, "11");
 			StringListPushFront(&list, "33");
 			StringListPushFront(&list, "22");
-			int actualSize1 = StringListSize(list);
 			StringListPopFront(&list);
 			int actualSize2 = StringListSize(list);
-			StringListPopFront(&list);
-			StringListPopFront(&list);
-			int actualSize3 = StringListSize(list);
-			Assert::AreEqual(expectedSize1, actualSize1);
 			Assert::AreEqual(expectedSize2, actualSize2);
-			Assert::AreEqual(expectedSize3, actualSize3);
 		}
 		TEST_METHOD(String_List_Remove_Duplicates_When_No_Such)
 		{
